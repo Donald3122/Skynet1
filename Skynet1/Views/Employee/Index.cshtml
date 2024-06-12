@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Skynet1.Models.Employee>
+
+@{
+    ViewBag.Title = "Employee List";
+}
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-5">
+    <h2 class="mb-4">Сотрудники</h2>
+
+    <p>
+        <a href="@Url.Action("Create", "Employee")" class="btn btn-primary rounded-pill">Create New</a>
+    </p>
+
+    <form asp-action="Index" method="get" class="form-inline mb-4">
+        <div class="form-group me-2">
+            <label for="searchString" class="sr-only">Имя:</label>
+            <input type="text" name="searchString" class="form-control rounded-pill" placeholder="Search by name" value="@ViewData["CurrentFilter"]" />
+        </div>
+        <button type="submit" class="btn btn-outline-secondary rounded-pill">Search</button>
+    </form>
+
+    <table class="table table-hover table-bordered rounded-3 overflow-hidden">
+        <thead class="table-light">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().NameEmployee)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Phone)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NameEmployee)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Phone)
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Edit", "Employee", new { id = item.EmployeeId })" class="btn btn-sm btn-warning rounded-pill">Edit</a>
+                        <a href="@Url.Action("Details", "Employee", new { id = item.EmployeeId })" class="btn btn-sm btn-info rounded-pill">Details</a>
+                        <a href="@Url.Action("Delete", "Employee", new { id = item.EmployeeId })" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>

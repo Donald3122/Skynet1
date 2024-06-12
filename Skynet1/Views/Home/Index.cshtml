@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map</title>
+    <!-- Подключение CSS для Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Подключение CSS и JS для Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Подключение JS для Leaflet -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <form class="form-inline">
+                    <input type="text" class="form-control mr-sm-2" id="addressSearch" placeholder="Введите адрес">
+                    <button class="btn btn-primary my-2 my-sm-0" type="button" onclick="geocodeAddress()">Поиск</button>
+                </form>
+                <button id="requestButton" class="btn btn-success my-2 my-sm-0" type="button" style="display:none;" onclick="redirectToClientPage()">Оформить заявку</button>
+            </div>
+        </div>
+        <!-- Добавленная строка для поиска по номеру телефона -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <form class="form-inline">
+                    <input type="text" class="form-control mr-sm-2" id="phoneSearch" placeholder="Введите номер телефона">
+                    <button class="btn btn-primary my-2 my-sm-0" type="button" onclick="searchByPhone()">Поиск</button>
+                </form>
+            </div>
+        </div>
+        <div id="map"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Создаем карту с центром в городе Бишкек
+            var map = L.map('map').setView([42.8746, 74.5698], 12); // Координаты центра карты (Бишкек)
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Определение зон с использованием полигонов
+            var zones = [
+                // Зона 1: Квадратная область
+                [
+                    [42.880, 74.572],
+                    [42.888, 74.572],
+                    [42.888, 74.580],
+                    [42.880, 74.580],
+                    [42.880, 74.572]
+                ],
+                // Зона 2: Квадратная область
+                [
+                    [42.870, 74.563],
+                    [42.878, 74.563],
+                    [42.878, 74.571],
+                    [42.870, 74.571],
+                    [42.870, 74.563]
+                ],
+                // Зона 3: Квадратная область
+                [
+                    [42.886, 74.580],
+                    [42.894, 74.580],
+                    [42.894, 74.588],
+                    [42.886, 74.588],
+                    [42.886, 74.580]
+                ]
+            ];
+
+            // Функция для стиля зон
+            function zoneStyle() {
+                return {
+                    fillColor: '#0000ff', // Синий цвет заливки
+                    weight: 2,
+                    opacity: 1,
+                    color: 'blue', // Цвет границы
+                    fillOpacity: 0.5
+                };
+            }
+
+            // Добавление зон на карту
+            zones.forEach(function (zoneCoords) {
+                L.polygon(zoneCoords, zoneStyle()).addTo(map);
+            });
+
+            window.geocodeAddress = function () {
+                var address = document.getElementById('addressSearch').value;
+                var geocodeUrl = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address) + '&countrycodes=KG';
+
+                fetch(geocodeUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            var result = data[0];
+                            var lat = parseFloat(result.lat);
+                            var lon = parseFloat(result.lon);
+                            var coords = [lat, lon];
+
+                            map.setView(coords, 16);
+                            var marker = L.marker(coords).addTo(map).bindPopup(result.display_name).openPopup();
+
+                            // Проверка, находится ли точка внутри зон
+                            var point = L.latLng(lat, lon);
+
+                            // Проверка для каждой зоны
+                            var isInsideZone1 = L.polygon(zones[0]).getBounds().contains(point);
+                            var isInsideZone2 = L.polygon(zones[1]).getBounds().contains(point);
+                            var isInsideZone3 = L.polygon(zones[2]).getBounds().contains(point);
+
+                            if (isInsideZone1 || isInsideZone2 || isInsideZone3) {
+                                alert('Подключение возможно');
+                                document.getElementById('requestButton').style.display = 'inline-block';
+                            } else {
+                                alert('К сожалению, подключение не возможно');
+                                document.getElementById('requestButton').style.display = 'none';
+                            }
+                        } else {
+                            alert('Адрес не найден');
+                            document.getElementById('requestButton').style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при поиске адреса:', error);
+                        alert('Ошибка при поиске адреса');
+                        document.getElementById('requestButton').style.display = 'none';
+                    });
+            };
+
+            window.redirectToClientPage = function () {
+                window.location.href = '/Ticket/Create';
+            };
+            // Добавленная функция для поиска по номеру телефона
+            window.searchByPhone = function () {
+                var phone = document.getElementById('phoneSearch').value;
+                var searchUrl = '/Ticket/SearchByPhone?phone=' + encodeURIComponent(phone);
+
+                fetch(searchUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Проверяем, есть ли данные о заявке
+                        if (data) {
+                            // Выводим данные о заявке (примерно, здесь можно реализовать вывод в соответствующий элемент на странице)
+                            alert('Найдена заявка:\nID: ' + data.ticketId + '\nНазвание заявки: ' + data.nameTicket + '\nАдрес: ' + data.address + '\nТелефон: ' + data.phone + '\nСтатус: ' + data.status);
+                        } else {
+                            alert('Заявка с указанным номером телефона не найдена');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при поиске заявки по номеру телефона:', error);
+                        alert('Ошибка при поиске заявки по номеру телефона');
+                    });
+            };
+        });
+    </script>
+</body>
+</html>
+

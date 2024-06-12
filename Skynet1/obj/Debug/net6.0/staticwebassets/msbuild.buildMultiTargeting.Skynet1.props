@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Skynet1.props" />
+</Project>

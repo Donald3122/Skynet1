@@ -1,0 +1,48 @@
+﻿@model Skynet1.Models.Employee
+
+@{
+    ViewBag.Title = "Create Employee";
+}
+
+<h2>Create Employee</h2>
+
+<h4>Employee</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div class="form-group">
+                <label class="control-label">Имя</label>
+                <input asp-for="NameEmployee" class="form-control" />
+                <span asp-validation-for="NameEmployee" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label  class="control-label">Электронная почта</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Номер телефона</label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label  class="control-label">Пароль</label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Должность</label>
+                <input asp-for="RolId" class="form-control" />
+                <span asp-validation-for="RolId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Добавить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Назад</a>
+</div>

@@ -1,0 +1,46 @@
+﻿@model Skynet1.Models.TicketViewModel
+
+@{
+    ViewBag.Title = "Оформление заявки";
+}
+
+<h2>Оформление заявки</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.NameTicket,"Имя", htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.NameTicket, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.NameTicket, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Address,"Полный адрес", htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Phone,"Номер Телефона", htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ServiceId,"Тариф", htmlAttributes: new { @class = "control-label" })
+        @Html.DropDownListFor(model => model.ServiceId, new SelectList(Model.Services, "ServiceId", "NameService"), "Тариф", new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ServiceId, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.HiddenFor(model => model.Status)
+
+    <div class="form-group">
+        <input type="submit" value="Оформить" class="btn btn-primary" />
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Назад", "Index")
+</div>
