@@ -15,6 +15,8 @@ namespace Skynet1.Controllers
 
         public IActionResult Index()
         {
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
             return View();
         }
 

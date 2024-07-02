@@ -19,18 +19,33 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+                        @if (ViewBag.UserRole == "Админ")
+                        {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="index">Сотрудники</a>
-                        </li>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="Create">Оформить заявку</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Service" asp-action="index">Тарифы</a>
+                         @if (ViewBag.UserRole == "Админ")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Service" asp-action="index">Тарифы</a>
+                            </li>
+                        }
+                        @if (ViewBag.UserRole == "Админ" || ViewBag.UserRole == "Оператор")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="index">Заявки</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="index">Заявки</a>
+                        }
+                        @if (ViewBag.UserRole == "Админ" || ViewBag.UserRole == "Кабельшик")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="ApprovedTickets">Подключение</a>
                         </li>
+                        }
                     </ul>
                 </div>
                 <ul class="navbar-nav">

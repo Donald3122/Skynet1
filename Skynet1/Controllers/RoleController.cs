@@ -8,6 +8,8 @@ namespace Skynet1.Controllers
         // GET: RoleController
         public ActionResult Index()
         {
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
             return View();
         }
 

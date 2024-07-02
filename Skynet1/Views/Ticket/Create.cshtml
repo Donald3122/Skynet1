@@ -23,10 +23,33 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.Phone,"Номер Телефона", htmlAttributes: new { @class = "control-label" })
-        @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.LabelFor(model => model.Phone, "Номер Телефона", htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control phone-input", maxlength = "13" } })
         @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var phoneInput = document.querySelector('.phone-input');
+
+            phoneInput.addEventListener('input', function() {
+                if (!phoneInput.value.startsWith('+996')) {
+                    phoneInput.value = '+996';
+                }
+            });
+
+            phoneInput.addEventListener('keypress', function(event) {
+                if (phoneInput.value.length >= 13 && !isNaN(event.key)) {
+                    event.preventDefault();
+                }
+            });
+
+            // Set initial value if it's empty
+            if (!phoneInput.value.startsWith('+996')) {
+                phoneInput.value = '+996';
+            }
+        });
+    </script>
 
     <div class="form-group">
         @Html.LabelFor(model => model.ServiceId,"Тариф", htmlAttributes: new { @class = "control-label" })
@@ -42,5 +65,5 @@
 }
 
 <div>
-    @Html.ActionLink("Назад", "Index")
+    @Html.ActionLink("Назад", "Index", "Home")
 </div>

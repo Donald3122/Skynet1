@@ -17,6 +17,8 @@ namespace Skynet1.Controllers
         // GET: ServiceController
         public async Task<IActionResult> Index()
         {
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
             var services = await _context.Services.ToListAsync();
             return View(services);
         }

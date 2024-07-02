@@ -1,16 +1,16 @@
 ﻿@model IEnumerable<Skynet1.Models.Service>
 
 @{
-    ViewBag.Title = "Service List";
+    ViewBag.Title = "Тарифы";
 }
 
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
 
 <div class="container mt-5">
-    <h2 class="mb-4">Service List</h2>
+    <h2 class="mb-4">Список тарифов</h2>
 
     <p>
-        <a href="@Url.Action("Create", "Service")" class="btn btn-primary rounded-pill">Create New</a>
+        <a href="@Url.Action("Create", "Service")" class="btn btn-primary rounded-pill">Добавить</a>
     </p>
 
     <table class="table table-hover table-bordered rounded-3 overflow-hidden">
@@ -30,9 +30,9 @@
                     <td>@Html.DisplayFor(modelItem => item.Description)</td>
                     <td>@Html.DisplayFor(modelItem => item.Price)</td>
                     <td>
-                        <a href="@Url.Action("Edit", "Service", new { id = item.ServiceId })" class="btn btn-sm btn-warning rounded-pill">Edit</a>
-                        <a href="@Url.Action("Details", "Service", new { id = item.ServiceId })" class="btn btn-sm btn-info rounded-pill">Details</a>
-                        <a href="@Url.Action("Delete", "Service", new { id = item.ServiceId })" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                        <a href="@Url.Action("Edit", "Service", new { id = item.ServiceId })" class="btn btn-sm btn-warning rounded-pill">Изменить</a>
+                        <a href="@Url.Action("Details", "Service", new { id = item.ServiceId })" class="btn btn-sm btn-info rounded-pill">Детали</a>
+                        <a href="@Url.Action("Delete", "Service", new { id = item.ServiceId })" class="btn btn-sm btn-danger rounded-pill">Удалить</a>
                     </td>
                 </tr>
             }

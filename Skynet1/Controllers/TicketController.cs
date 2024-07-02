@@ -18,6 +18,8 @@ namespace Skynet1.Controllers
 
         public async Task<IActionResult> Index(string status)
         {
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
             var tickets = _context.Tickets.AsQueryable();
 
             if (!string.IsNullOrEmpty(status) && status != "Все")
@@ -36,6 +38,8 @@ namespace Skynet1.Controllers
 
         public async Task<IActionResult> Create()
         {
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
             var services = await _context.Services.ToListAsync();
             var viewModel = new TicketViewModel
             {
@@ -48,6 +52,8 @@ namespace Skynet1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TicketViewModel viewModel)
         {
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
             if (ModelState.IsValid)
             {
                 var ticket = new Ticket
@@ -123,5 +129,49 @@ namespace Skynet1.Controllers
         {
             return View(ticket);
         }
+
+        // Новый метод для отображения одобренных заявок
+        public async Task<IActionResult> ApprovedTickets()
+        {
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
+            var approvedTickets = await _context.Tickets
+                .Where(t => t.Status == "Одобрено" || t.Status == "Выполняется" || t.Status == "Выполнено")
+                .ToListAsync();
+
+            var viewModel = new TicketFilterViewModel
+            {
+                Tickets = approvedTickets,
+                CurrentStatus = "Одобрено"
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StartWork(int id)
+        {
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket != null)
+            {
+                ticket.Status = "Выполняется";
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(ApprovedTickets));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompleteWork(int id)
+        {
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket != null)
+            {
+                ticket.Status = "Выполнено";
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(ApprovedTickets));
+        }
     }
+
+
 }

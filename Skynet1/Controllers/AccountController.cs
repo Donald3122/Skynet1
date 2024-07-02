@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Skynet1.Models;
 using System.Linq;
 
@@ -16,6 +17,8 @@ namespace Skynet1.Controllers
         // GET: Account/Login
         public ActionResult Login()
         {
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
             return View();
         }
 
@@ -26,15 +29,18 @@ namespace Skynet1.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (AuthenticateUser(model))
+                var user = AuthenticateUser(model);
+                if (user != null)
                 {
-                    TempData["Message"] = "Login successful!";
+                    // Успешная аутентификация
+                    SetUserSession(user); // Установка информации о пользователе и его роли в сессию
+                    TempData["Message"] = "Вы успешно вошли в систему!";
                     TempData["AlertClass"] = "alert-success";
                     return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    TempData["Message"] = "Invalid username or password!";
+                    TempData["Message"] = "Неправильное имя пользователя или пароль! ";
                     TempData["AlertClass"] = "alert-danger";
                 }
             }
@@ -42,16 +48,31 @@ namespace Skynet1.Controllers
             return View(model);
         }
 
-        private bool AuthenticateUser(LoginViewModel model)
+        private Employee AuthenticateUser(LoginViewModel model)
         {
-            var user = _context.Employees.FirstOrDefault(u => u.NameEmployee == model.Username && u.Password == model.Password);
+            // Загрузка пользователя с его ролью из базы данных
+            var user = _context.Employee
+                .Include(e => e.Role) // Подгрузка связанной сущности Role
+                .FirstOrDefault(u => u.NameEmployee == model.Username && u.Password == model.Password);
 
-            if (user != null)
+            return user;
+        }
+
+        private void SetUserSession(Employee user)
+        {
+            // Установка информации о пользователе в сессию
+            HttpContext.Session.SetInt32("UserId", user.EmployeeId);
+            HttpContext.Session.SetString("UserName", user.NameEmployee);
+
+            // Проверка наличия роли и установка её в сессию
+            if (user.Role != null)
             {
-                return true;
+                HttpContext.Session.SetString("UserRole", user.Role.RoleName);
             }
-
-            return false;
+            else
+            {
+                HttpContext.Session.SetString("UserRole", "Unknown");
+            }
         }
     }
 }

@@ -18,7 +18,9 @@ namespace Skynet1.Controllers
         // GET: Employee
         public async Task<IActionResult> Index(string searchString)
         {
-            var employees = from e in _context.Employees
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
+            var employees = from e in _context.Employee
                             select e;
 
             if (!string.IsNullOrEmpty(searchString))
@@ -37,7 +39,7 @@ namespace Skynet1.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employees
+            var employee = await _context.Employee
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employee == null)
             {
@@ -50,21 +52,21 @@ namespace Skynet1.Controllers
         // GET: Employee/Create
         public IActionResult Create()
         {
+            var userRole = HttpContext.Session.GetString("UserRole") ?? "Unknown";
+            ViewBag.UserRole = userRole;
             return View();
         }
 
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,NameEmployee,Password,Email,Phone,RolId")] Employee employee)
+        public async Task<IActionResult> Create([Bind("NameEmployee,Password,Email,Phone,RolId")] Employee employee)
         {
-            if (ModelState.IsValid)
-            {
+
                 _context.Add(employee);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-            return View(employee);
+
         }
 
         // GET: Employee/Edit/5
@@ -75,7 +77,7 @@ namespace Skynet1.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await _context.Employee.FindAsync(id);
             if (employee == null)
             {
                 return NotFound();
@@ -93,8 +95,6 @@ namespace Skynet1.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
                 try
                 {
                     _context.Update(employee);
@@ -112,8 +112,7 @@ namespace Skynet1.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            return View(employee);
+          
         }
 
         // GET: Employee/Delete/5
@@ -124,7 +123,7 @@ namespace Skynet1.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employees
+            var employee = await _context.Employee
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employee == null)
             {
@@ -139,15 +138,15 @@ namespace Skynet1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var employee = await _context.Employees.FindAsync(id);
-            _context.Employees.Remove(employee);
+            var employee = await _context.Employee.FindAsync(id);
+            _context.Employee.Remove(employee);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool EmployeeExists(int id)
         {
-            return _context.Employees.Any(e => e.EmployeeId == id);
+            return _context.Employee.Any(e => e.EmployeeId == id);
         }
     }
 }

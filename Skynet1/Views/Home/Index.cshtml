@@ -1,7 +1,5 @@
 ﻿<!DOCTYPE html>
-
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +19,6 @@
             width: 100%;
         }
     </style>
-
 </head>
 <body>
     <div class="container mt-5">
@@ -144,9 +141,17 @@
             window.redirectToClientPage = function () {
                 window.location.href = '/Ticket/Create';
             };
+
             // Добавленная функция для поиска по номеру телефона
             window.searchByPhone = function () {
-                var phone = document.getElementById('phoneSearch').value;
+                var phone = document.getElementById('phoneSearch').value.trim();
+
+                // Проверка на начало с '+996' и длину номера ровно 13 символов
+                if (!phone.startsWith('+996') || phone.length !== 13) {
+                    alert('Номер телефона должен начинаться с "+996" и содержать 13 символов.');
+                    return;
+                }
+
                 var searchUrl = '/Ticket/SearchByPhone?phone=' + encodeURIComponent(phone);
 
                 fetch(searchUrl)
@@ -169,4 +174,3 @@
     </script>
 </body>
 </html>
-

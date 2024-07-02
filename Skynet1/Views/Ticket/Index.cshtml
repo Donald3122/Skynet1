@@ -8,12 +8,12 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
 
 <div class="container mt-5">
-    <h2 class="mb-4">Tickets</h2>
+    <h2 class="mb-4">Заявки</h2>
 
     <form method="get" asp-action="Index" class="mb-4">
         <div class="form-group">
-            <label for="status">Filter by Status:</label>
-            <select id="status" name="status" class="form-control" onchange="filterTickets()">
+            <label for="status">Фильтор для статуса</label>
+            <select id="status" name="Статус" class="form-control" onchange="filterTickets()">
                 @foreach (var status in statuses)
                 {
                     <option value="@status" selected="@((status == Model.CurrentStatus) ? "selected" : null)">@status</option>
@@ -45,21 +45,17 @@
                     <td>
                         <form asp-action="Approve" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@ticket.TicketId" />
-                            <button type="submit" class="btn btn-success rounded-pill">Approve</button>
+                            <button type="submit" class="btn btn-success rounded-pill">Одобрить</button>
                         </form>
                         <form asp-action="Reject" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@ticket.TicketId" />
-                            <button type="submit" class="btn btn-danger rounded-pill">Reject</button>
+                            <button type="submit" class="btn btn-danger rounded-pill">Отклонить</button>
                         </form>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-
-    <div class="mt-3">
-        <a href="@Url.Action("Create", "Ticket")" class="btn btn-primary rounded-pill">Create New Ticket</a>
-    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
